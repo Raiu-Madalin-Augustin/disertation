@@ -29,7 +29,6 @@ public class CartTests : IAsyncLifetime
         _context = new MiniShopContext(options);
         await _context.Database.EnsureCreatedAsync();
 
-        // Seed fără ID manual
         var category = new Category { Name = "Test" };
         var product = new Product
         {
