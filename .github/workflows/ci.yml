@@ -26,13 +26,13 @@ jobs:
         run: dotnet restore
 
       - name: 🧱 Build solution
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --configuration Release
 
       - name: 🧪 Run unit tests
-        run: dotnet test MiniShop.Tests --no-build --verbosity normal
+        run: dotnet test MiniShop.Tests/MiniShop.Tests.csproj --configuration Release --no-build --verbosity normal
 
       - name: 🧠 Run DB-RegKit analysis
-        run: dotnet run --project MiniShop.RegKit
+        run: dotnet run --project MiniShop.RegKit --configuration Release
 
       - name: 📁 Upload generated reports
         uses: actions/upload-artifact@v4
