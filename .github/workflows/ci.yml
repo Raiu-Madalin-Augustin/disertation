@@ -35,7 +35,7 @@ jobs:
         run: dotnet run --project MiniShop.RegKit
 
       - name: 📁 Upload generated reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apfd-reports
           path: |
