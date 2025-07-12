@@ -1,0 +1,41 @@
+tests:
+  T1:
+    tables: ["users"]
+  T2:
+    tables: ["users"]
+  T3:
+    tables: ["users"]
+  T4:
+    tables: ["products", "categories"]
+  T5:
+    tables: ["products"]
+  T6:
+    tables: ["products", "cart_items"]
+  T7:
+    tables: ["cart_items"]
+  T8:
+    tables: ["products", "cart_items"]
+  T9:
+    tables: ["orders", "order_items", "cart_items", "products"]
+  T10:
+    tables: ["cart_items", "orders"]
+  T11:
+    tables: ["orders", "order_items", "products"]
+  T12:
+    tables: ["orders", "order_items"]
+  T13:
+    tables: ["users"]
+  T14:
+    tables: ["products", "categories", "audit_log"]
+  T15:
+    tables: ["products", "audit_log"]
+  T16:
+    tables: ["categories", "audit_log"]
+  T17:
+    tables: ["products", "audit_log"]
+  T18:
+    tables: ["cart_items"]
+  T19:
+    tables: ["orders"]
+  T20:
+    tables: ["cart_items", "products"]

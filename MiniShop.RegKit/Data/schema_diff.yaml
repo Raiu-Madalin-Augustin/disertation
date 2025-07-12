@@ -1,0 +1,5 @@
+diff:
+  - table: "products"
+    column_removed: "name"
+  - table: "categories"
+    column_removed: "description"

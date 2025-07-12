@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.API", "MiniShop.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Tests", "MiniShop.Tests\MiniShop.Tests.csproj", "{ABB0EF68-0412-4D50-89C4-1B5759DA979B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.RegKit", "MiniShop.RegKit\MiniShop.RegKit.csproj", "{B7D83F3D-ACF9-40AA-8182-FDA9C07BDF78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{ABB0EF68-0412-4D50-89C4-1B5759DA979B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB0EF68-0412-4D50-89C4-1B5759DA979B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB0EF68-0412-4D50-89C4-1B5759DA979B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D83F3D-ACF9-40AA-8182-FDA9C07BDF78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D83F3D-ACF9-40AA-8182-FDA9C07BDF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D83F3D-ACF9-40AA-8182-FDA9C07BDF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D83F3D-ACF9-40AA-8182-FDA9C07BDF78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

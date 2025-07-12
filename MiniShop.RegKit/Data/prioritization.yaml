@@ -1,0 +1,40 @@
+﻿prioritized_tests:
+- id: T14
+  position: 1
+  faults:
+  - F1
+  - F3
+- id: T4
+  position: 2
+  faults:
+  - F1
+- id: T5
+  position: 3
+  faults:
+  - F2
+- id: T6
+  position: 4
+  faults:
+  - F4
+- id: T9
+  position: 5
+  faults:
+  - F3
+- id: T8
+  position: 6
+  faults: []
+- id: T11
+  position: 7
+  faults: []
+- id: T15
+  position: 8
+  faults: []
+- id: T16
+  position: 9
+  faults: []
+- id: T17
+  position: 10
+  faults: []
+- id: T20
+  position: 11
+  faults: []
