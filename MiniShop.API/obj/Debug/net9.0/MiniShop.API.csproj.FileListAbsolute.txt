@@ -168,3 +168,4 @@ D:\Dizertatie Blub\disertation\MiniShop.API\obj\Debug\net9.0\refint\MiniShop.API
 D:\Dizertatie Blub\disertation\MiniShop.API\obj\Debug\net9.0\MiniShop.API.pdb
 D:\Dizertatie Blub\disertation\MiniShop.API\obj\Debug\net9.0\MiniShop.API.genruntimeconfig.cache
 D:\Dizertatie Blub\disertation\MiniShop.API\obj\Debug\net9.0\ref\MiniShop.API.dll
+D:\Dizertatie Blub\disertation\MiniShop.API\obj\Debug\net9.0\MiniShop.API.sourcelink.json

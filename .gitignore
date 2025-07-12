@@ -1,0 +1,46 @@
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.app
+*.db
+
+# Entity Framework
+Migrations/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dotnet tools
+*.vs/
+*.swp
+
+# LocalDB or other dev DBs
+MiniShopDb.mdf
+MiniShopDb_log.ldf
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# dotenv or local secrets (if used)
+.env
