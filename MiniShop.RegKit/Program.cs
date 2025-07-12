@@ -28,7 +28,7 @@ class Program
 {
     static void Main()
     {
-        var basePath = Path.Combine(AppContext.BaseDirectory.Split("bin")[0], "MiniShop.RegKit", "Data");
+        var basePath = Path.Combine(AppContext.BaseDirectory.Split("bin")[0], "Data");
 
         var testsYaml = File.ReadAllText(Path.Combine(basePath, "tests.yaml"));
         var schemaDiffYaml = File.ReadAllText(Path.Combine(basePath, "schema_diff.yaml"));
