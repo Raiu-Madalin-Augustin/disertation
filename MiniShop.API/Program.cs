@@ -21,4 +21,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var ctx = scope.ServiceProvider.GetRequiredService<MiniShopContext>();
+    await MiniShopSeeder.SeedAsync(ctx);
+}
+
 app.Run();
