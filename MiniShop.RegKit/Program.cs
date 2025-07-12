@@ -28,13 +28,14 @@ class Program
 {
     static void Main()
     {
+        var basePath = Path.Combine(AppContext.BaseDirectory.Split("bin")[0], "MiniShop.RegKit", "Data");
+
+        var testsYaml = File.ReadAllText(Path.Combine(basePath, "tests.yaml"));
+        var schemaDiffYaml = File.ReadAllText(Path.Combine(basePath, "schema_diff.yaml"));
+
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
-
-        var dataPath = Path.Combine(AppContext.BaseDirectory, "Data");
-        var testsYaml = File.ReadAllText(Path.Combine(dataPath, "tests.yaml"));
-        var schemaDiffYaml = File.ReadAllText(Path.Combine(dataPath, "schema_diff.yaml"));
 
         var tests = deserializer.Deserialize<TestDefinition>(testsYaml);
         var diffs = deserializer.Deserialize<SchemaDiff>(schemaDiffYaml);
@@ -60,25 +61,10 @@ class Program
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
 
-        var impactYaml = serializer.Serialize(output);
-        File.WriteAllText(Path.Combine(dataPath, "impact.yaml"), impactYaml, Encoding.UTF8);
-
+        var impactPath = Path.Combine(basePath, "impact.yaml");
+        File.WriteAllText(impactPath, serializer.Serialize(output), Encoding.UTF8);
         Console.WriteLine("✔ impact.yaml generat cu succes.");
 
-        var faultsPerTest = new Dictionary<string, List<string>>
-        {
-            { "T4", new List<string> { "F1" } },
-            { "T5", new List<string> { "F2" } },
-            { "T14", new List<string> { "F1", "F3" } },
-            { "T6", new List<string> { "F4" } },
-            { "T9", new List<string> { "F3" } }
-        };
-
-        var result = APFDCalculator.ComputeFromYaml("Data/impact.yaml", faultsPerTest);
-
-        APFDCalculator.ExportPrioritizationYaml(Path.Combine(dataPath, "prioritization.yaml"), result.PrioritizedTests, faultsPerTest);
-        APFDCalculator.ExportPrioritizationHtml(Path.Combine(dataPath, "prioritization.html"), result.PrioritizedTests, faultsPerTest);
-
-        ExperimentRunner.RunRegressionComparison();
+        ExperimentRunner.RunRegressionComparison(basePath);
     }
 }

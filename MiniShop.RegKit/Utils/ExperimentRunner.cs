@@ -6,9 +6,9 @@ namespace MiniShop.RegKit.Utils;
 
 public static class ExperimentRunner
 {
-    public static void RunRegressionComparison()
+    public static void RunRegressionComparison(string basePath)
     {
-        var baseDataPath = Path.Combine(AppContext.BaseDirectory, "Data");
+        var impactPath = Path.Combine(basePath, "impact.yaml");
 
         var faultsPerTest = new Dictionary<string, List<string>>
         {
@@ -23,8 +23,7 @@ public static class ExperimentRunner
             { "T20", new List<string> { "F3" } }
         };
 
-        // 🧠 APFD pentru prioritizare automată
-        var result = APFDCalculator.ComputeFromYaml(Path.Combine(baseDataPath, "impact.yaml"), faultsPerTest);
+        var result = APFDCalculator.ComputeFromYaml(impactPath, faultsPerTest);
 
         Console.WriteLine("✅ Prioritizare automată:");
         foreach (var test in result.PrioritizedTests)
@@ -33,14 +32,12 @@ public static class ExperimentRunner
         }
         Console.WriteLine($"📈 APFD (prioritizat): {result.APFD}");
 
-        // 🎲 APFD pentru o permutare random
         var rnd = new Random();
         var shuffled = result.PrioritizedTests.OrderBy(_ => rnd.Next()).ToList();
 
         var randomResult = APFDCalculator.ComputeFromYamlFromList(shuffled, faultsPerTest);
         Console.WriteLine($"\n🎲 APFD (random): {randomResult.APFD}");
 
-        // 💾 Salvează un raport simplu
         var report = new
         {
             timestamp = DateTime.UtcNow.ToString("u"),
@@ -53,64 +50,25 @@ public static class ExperimentRunner
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
 
-        File.WriteAllText(Path.Combine(baseDataPath, "results.yaml"), serializer.Serialize(report), Encoding.UTF8);
+        File.WriteAllText(Path.Combine(basePath, "results.yaml"), serializer.Serialize(report), Encoding.UTF8);
+        Console.WriteLine("📄 Salvat raport în results.yaml");
 
-        Console.WriteLine("\n📄 Salvat raport în Data/results.yaml");
-
-        ExportComparisonHtml(
-            Path.Combine(baseDataPath, "apfd_comparison.html"),
-            result.PrioritizedTests,
-            shuffled,
-            result.APFD,
-            randomResult.APFD
-        );
-        ExportComparisonChartHtml(
-            Path.Combine(baseDataPath, "apfd_chart.html"),
-            result.APFD,
-            randomResult.APFD
-        );
+        ExportComparisonHtml(Path.Combine(basePath, "apfd_comparison.html"), result.PrioritizedTests, shuffled, result.APFD, randomResult.APFD);
+        ExportComparisonChartHtml(Path.Combine(basePath, "apfd_chart.html"), result.APFD, randomResult.APFD);
     }
 
     private static void ExportComparisonHtml(string outputPath, List<string> ordered, List<string> randomized, double apfdOrdered, double apfdRandom)
     {
         var sb = new StringBuilder();
-
-        sb.AppendLine("<!DOCTYPE html>");
-        sb.AppendLine("<html lang='en'><head><meta charset='UTF-8'>");
-        sb.AppendLine("<title>APFD Comparison Report</title>");
-        sb.AppendLine("<style>");
-        sb.AppendLine("body { font-family: Arial, sans-serif; margin: 2em; }");
-        sb.AppendLine("h2 { color: #333; }");
-        sb.AppendLine("table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }");
-        sb.AppendLine("th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }");
-        sb.AppendLine("th { background-color: #f2f2f2; }");
-        sb.AppendLine("</style>");
-        sb.AppendLine("</head><body>");
-        sb.AppendLine("<h2>Comparatie Prioritizare vs Random</h2>");
-
-        sb.AppendLine("<p><strong>APFD Prioritizat:</strong> " + apfdOrdered + "</p>");
-        sb.AppendLine("<p><strong>APFD Random:</strong> " + apfdRandom + "</p>");
-
-        sb.AppendLine("<h3>Ordine Prioritizată</h3>");
-        sb.AppendLine("<table><tr><th>#</th><th>Test</th></tr>");
-        for (int i = 0; i < ordered.Count; i++)
-        {
-            sb.AppendLine($"<tr><td>{i + 1}</td><td>{ordered[i]}</td></tr>");
-        }
-        sb.AppendLine("</table>");
-
-        sb.AppendLine("<h3>Ordine Aleatorie</h3>");
-        sb.AppendLine("<table><tr><th>#</th><th>Test</th></tr>");
-        for (int i = 0; i < randomized.Count; i++)
-        {
-            sb.AppendLine($"<tr><td>{i + 1}</td><td>{randomized[i]}</td></tr>");
-        }
-        sb.AppendLine("</table>");
-
-        sb.AppendLine("</body></html>");
-
+        sb.AppendLine("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>APFD Comparison</title></head><body>");
+        sb.AppendLine($"<h2>APFD Prioritizat: {apfdOrdered}</h2>");
+        sb.AppendLine($"<h2>APFD Random: {apfdRandom}</h2>");
+        sb.AppendLine("<h3>Ordine prioritizată:</h3><ul>");
+        ordered.ForEach(t => sb.AppendLine($"<li>{t}</li>"));
+        sb.AppendLine("</ul><h3>Ordine random:</h3><ul>");
+        randomized.ForEach(t => sb.AppendLine($"<li>{t}</li>"));
+        sb.AppendLine("</ul></body></html>");
         File.WriteAllText(outputPath, sb.ToString(), Encoding.UTF8);
-        Console.WriteLine($"📄 Export HTML: {outputPath}");
     }
 
     private static void ExportComparisonChartHtml(string outputPath, double apfdOrdered, double apfdRandom)
@@ -128,7 +86,6 @@ public static class ExperimentRunner
     <h2 style='text-align: center;'>Comparație APFD</h2>
     <canvas id='apfdChart'></canvas>
   </div>
-
   <script>
     const ctx = document.getElementById('apfdChart').getContext('2d');
     const chart = new Chart(ctx, {{
@@ -154,6 +111,5 @@ public static class ExperimentRunner
 </body>
 </html>";
         File.WriteAllText(outputPath, html, Encoding.UTF8);
-        Console.WriteLine($"📊 Grafic exportat în: {outputPath}");
     }
 }
