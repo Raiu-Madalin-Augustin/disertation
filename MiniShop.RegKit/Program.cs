@@ -32,8 +32,9 @@ class Program
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
 
-        var testsYaml = File.ReadAllText("Data/tests.yaml");
-        var schemaDiffYaml = File.ReadAllText("Data/schema_diff.yaml");
+        var dataPath = Path.Combine(AppContext.BaseDirectory, "Data");
+        var testsYaml = File.ReadAllText(Path.Combine(dataPath, "tests.yaml"));
+        var schemaDiffYaml = File.ReadAllText(Path.Combine(dataPath, "schema_diff.yaml"));
 
         var tests = deserializer.Deserialize<TestDefinition>(testsYaml);
         var diffs = deserializer.Deserialize<SchemaDiff>(schemaDiffYaml);
@@ -60,7 +61,7 @@ class Program
             .Build();
 
         var impactYaml = serializer.Serialize(output);
-        File.WriteAllText("Data/impact.yaml", impactYaml, Encoding.UTF8);
+        File.WriteAllText(Path.Combine(dataPath, "impact.yaml"), impactYaml, Encoding.UTF8);
 
         Console.WriteLine("✔ impact.yaml generat cu succes.");
 
@@ -75,8 +76,8 @@ class Program
 
         var result = APFDCalculator.ComputeFromYaml("Data/impact.yaml", faultsPerTest);
 
-        APFDCalculator.ExportPrioritizationYaml("Data/prioritization.yaml", result.PrioritizedTests, faultsPerTest);
-        APFDCalculator.ExportPrioritizationHtml("Data/prioritization.html", result.PrioritizedTests, faultsPerTest);
+        APFDCalculator.ExportPrioritizationYaml(Path.Combine(dataPath, "prioritization.yaml"), result.PrioritizedTests, faultsPerTest);
+        APFDCalculator.ExportPrioritizationHtml(Path.Combine(dataPath, "prioritization.html"), result.PrioritizedTests, faultsPerTest);
 
         ExperimentRunner.RunRegressionComparison();
     }

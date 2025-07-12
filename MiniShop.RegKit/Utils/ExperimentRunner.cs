@@ -8,6 +8,8 @@ public static class ExperimentRunner
 {
     public static void RunRegressionComparison()
     {
+        var baseDataPath = Path.Combine(AppContext.BaseDirectory, "Data");
+
         var faultsPerTest = new Dictionary<string, List<string>>
         {
             { "T4", new List<string> { "F1" } },
@@ -22,7 +24,8 @@ public static class ExperimentRunner
         };
 
         // 🧠 APFD pentru prioritizare automată
-        var result = APFDCalculator.ComputeFromYaml("Data/impact.yaml", faultsPerTest);
+        var result = APFDCalculator.ComputeFromYaml(Path.Combine(baseDataPath, "impact.yaml"), faultsPerTest);
+
         Console.WriteLine("✅ Prioritizare automată:");
         foreach (var test in result.PrioritizedTests)
         {
@@ -50,17 +53,22 @@ public static class ExperimentRunner
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
 
-        File.WriteAllText("Data/results.yaml", serializer.Serialize(report), Encoding.UTF8);
+        File.WriteAllText(Path.Combine(baseDataPath, "results.yaml"), serializer.Serialize(report), Encoding.UTF8);
+
         Console.WriteLine("\n📄 Salvat raport în Data/results.yaml");
 
         ExportComparisonHtml(
-            "Data/apfd_comparison.html",
+            Path.Combine(baseDataPath, "apfd_comparison.html"),
             result.PrioritizedTests,
             shuffled,
             result.APFD,
             randomResult.APFD
         );
-        ExportComparisonChartHtml("Data/apfd_chart.html", result.APFD, randomResult.APFD);
+        ExportComparisonChartHtml(
+            Path.Combine(baseDataPath, "apfd_chart.html"),
+            result.APFD,
+            randomResult.APFD
+        );
     }
 
     private static void ExportComparisonHtml(string outputPath, List<string> ordered, List<string> randomized, double apfdOrdered, double apfdRandom)
