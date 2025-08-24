@@ -8,8 +8,7 @@ using MiniShop.API.Filters;
 namespace MiniShop.API.Controllers
 {
     [ApiController]
-    [Route("api/admin/[controller]")]
-    [ServiceFilter(typeof(AdminOnlyAttribute))] // protecție admin (poți scoate temporar dacă vrei să testezi fără auth)
+    [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
         private readonly MiniShopContext _ctx;

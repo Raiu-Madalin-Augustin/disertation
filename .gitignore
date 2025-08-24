@@ -37,6 +37,10 @@ Thumbs.db
 MiniShopDb.mdf
 MiniShopDb_log.ldf
 
+node_modules/
+dist/
+dist-ssr/
+*.local
 # Test results
 TestResults/
 *.coverage

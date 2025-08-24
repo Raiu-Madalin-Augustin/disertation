@@ -44,38 +44,61 @@ public class AdminReportsController : ControllerBase
         });
     }
 
-    // GET: api/admin/reports/sales-by-category?from=2025-07-01&to=2025-08-31
     [HttpGet("sales-by-category")]
     public async Task<IActionResult> SalesByCategory([FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
     {
         NormalizeRange(ref from, ref to);
+        var fromV = from ?? DateTime.MinValue;
+        var toV = to ?? DateTime.MaxValue;
 
-        var data = await _ctx.OrderItems
-            .AsNoTracking()
-            .Join(_ctx.Orders, oi => oi.OrderId, o => o.Id, (oi, o) => new { oi, o })
-            .Join(_ctx.Products, x => x.oi.ProductId, p => p.Id, (x, p) => new { x.oi, x.o, p })
-            .Join(_ctx.Categories, x => x.p.CategoryId, c => c.Id, (x, c) => new { x.oi, x.o, x.p, c })
-            .Where(x => x.o.CreatedAt >= from && x.o.CreatedAt < to)
-            .GroupBy(x => new { x.c.Id, x.c.Name })
-            .Select(g => new SalesByCategoryRowDto(
-                g.Key.Id,
-                g.Key.Name,
-                g.Sum(r => r.oi.Quantity),
-                g.Sum(r => r.oi.Quantity * r.oi.Price)
-            ))
+        // 1) Filter order items by order date, aggregate at Product level (NO joins here)
+        var byProduct =
+            from oi in _ctx.OrderItems.AsNoTracking()
+            join o in _ctx.Orders on oi.OrderId equals o.Id
+            where o.CreatedAt >= fromV && o.CreatedAt < toV
+            group oi by oi.ProductId into g
+            select new
+            {
+                ProductId = g.Key,
+                TotalQty = g.Sum(x => x.Quantity),
+                TotalRevenue = g.Sum(x => x.Quantity * x.Price) // int*decimal -> decimal
+            };
 
-            .OrderByDescending(r => r.TotalRevenue)
-            .ToListAsync();
+        // 2) Attach Product.CategoryId (still simple), then group to CategoryId
+        var byCategoryId =
+            from bp in byProduct
+            join p in _ctx.Products.AsNoTracking() on bp.ProductId equals p.Id
+            group bp by p.CategoryId into g
+            select new
+            {
+                CategoryId = g.Key,
+                TotalQty = g.Sum(x => x.TotalQty),
+                TotalRevenue = g.Sum(x => x.TotalRevenue)
+            };
+
+        // 3) Join Category name at the end (AFTER aggregation) and project DTO
+        var rows = await (
+            from bc in byCategoryId
+            join c in _ctx.Categories.AsNoTracking() on bc.CategoryId equals c.Id
+            orderby bc.TotalRevenue descending
+            select new SalesByCategoryRowDto(
+                c.Id,
+                c.Name,
+                bc.TotalQty,
+                bc.TotalRevenue
+            )
+        ).ToListAsync();
 
         return Ok(new
         {
-            from,
-            to,
-            rows = data,
-            totalRevenue = data.Sum(r => r.TotalRevenue),
-            totalQty = data.Sum(r => r.TotalQty)
+            from = fromV,
+            to = toV,
+            rows,
+            totalRevenue = rows.Sum(r => r.TotalRevenue),
+            totalQty = rows.Sum(r => r.TotalQty)
         });
     }
+
 
     // GET: api/admin/reports/top-products?from=2025-07-01&to=2025-08-31&top=10&sort=revenue
     // sort: "qty" | "revenue"

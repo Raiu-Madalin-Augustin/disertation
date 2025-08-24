@@ -45,17 +45,18 @@ public class AuthController : ControllerBase
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-        {
             return Unauthorized("Invalid email or password.");
-        }
+
+        var roleString = user.IsAdmin ? "Admin" : "Client";
 
         return Ok(new
         {
             message = "Login successful",
-            user.Email,
-            user.Username,
-            user.IsAdmin,
-            user.Role
+            id = user.Id,
+            username = user.Username,
+            email = user.Email,
+            isAdmin = user.IsAdmin,
+            role = roleString
         });
     }
 
