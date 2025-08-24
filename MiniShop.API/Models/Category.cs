@@ -8,6 +8,6 @@ namespace MiniShop.API.Models
         public string Name { get; set; }
 
         [JsonIgnore]
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product?> Products { get; set; }
     }
 }

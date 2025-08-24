@@ -17,37 +17,53 @@ namespace MiniShop.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Prețuri cu precizie fixă
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);
-            // Relație Order → OrderItem
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.Price)
+                .HasPrecision(10, 2);
+
+            // Order -> Items
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Items)
                 .WithOne(i => i.Order)
-                .HasForeignKey(i => i.OrderId);
+                .HasForeignKey(i => i.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Relație User → Order
+            // User -> Orders
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Orders)
                 .WithOne(o => o.User)
-                .HasForeignKey(o => o.UserId);
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Relație CartItem
+            // CartItem -> User (un user are multe iteme în coș)
+            modelBuilder.Entity<CartItem>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.CartItems) 
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CartItem -> Product (nu vrem să șteargă produsul în lanț)
             modelBuilder.Entity<CartItem>()
                 .HasOne(c => c.Product)
                 .WithMany()
-                .HasForeignKey(c => c.ProductId);
+                .HasForeignKey(c => c.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CartItem>()
-                .HasOne(c => c.User)
-                .WithMany()
-                .HasForeignKey(c => c.UserId);
-
-            // Relație Product → Category
+            // Product -> Category
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
-                .HasForeignKey(p => p.CategoryId);
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // (opțional) Indexuri utile pentru F2/F7
+            modelBuilder.Entity<Product>().HasIndex(p => p.Name);
+            modelBuilder.Entity<Product>().HasIndex(p => new { p.CategoryId, p.Price });
         }
     }
 }

@@ -9,6 +9,6 @@ namespace MiniShop.API.Models
         public string Email { get; set; } = string.Empty;
         public Role Role { get; set; } = Role.Client;
         public ICollection<Order> Orders { get; set; }
-
+        public ICollection<CartItem> CartItems { get; set; } = [];
     }
 }
