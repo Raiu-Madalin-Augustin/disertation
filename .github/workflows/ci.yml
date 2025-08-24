@@ -38,7 +38,8 @@ jobs:
         with:
           name: apfd-reports
           path: |
-            Data/impact.yaml
-            Data/results.yaml
-            Data/apfd_chart.html
-            Data/prioritization.yaml
+            **/Data/impact.yaml
+            **/Data/results.yaml
+            **/Data/apfd_chart.html
+            **/Data/prioritization.yaml
+          if-no-files-found: warn
