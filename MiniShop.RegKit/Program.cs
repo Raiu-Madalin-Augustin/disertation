@@ -21,7 +21,11 @@ public class SchemaDiff
 public class DiffEntry
 {
     public string Table { get; set; } = "";
-    public string? ColumnRemoved { get; set; }
+    // suportă formatul vechi și cel nou
+    public string? Column { get; set; }           // ex: "stock_status" când change=column_added
+    public string? Change { get; set; }           // ex: "column_added" | "column_removed" | "modified"
+    public string? ColumnRemoved { get; set; }    // compat vechi
+    public string? ColumnAdded { get; set; }      // compat vechi
 }
 
 class Program
@@ -43,9 +47,13 @@ class Program
         var impacted = new HashSet<string>();
 
         var modifiedTables = diffs.Diff
-            .Where(d => !string.IsNullOrWhiteSpace(d.ColumnRemoved))
+            .Where(d =>
+             !string.IsNullOrWhiteSpace(d.Change) ||          // scenariu nou (ex: column_added)
+             !string.IsNullOrWhiteSpace(d.ColumnRemoved) ||   // compat vechi
+             !string.IsNullOrWhiteSpace(d.ColumnAdded) ||     // compat vechi
+             !string.IsNullOrWhiteSpace(d.Column))            // dacă e doar column setat
             .Select(d => d.Table)
-            .ToHashSet();
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var test in tests.Tests)
         {

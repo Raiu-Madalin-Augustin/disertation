@@ -1,5 +1,4 @@
 diff:
-  - table: "products"
-    column_removed: "name"
-  - table: "categories"
-    column_removed: "description"
+  - table: products
+    change: column_added
+    column: stock_status

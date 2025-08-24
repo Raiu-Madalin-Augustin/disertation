@@ -1,4 +1,4 @@
-﻿timestamp: 2025-07-12 11:10:29Z
+﻿timestamp: 2025-08-24 15:26:37Z
 tests:
 - T4
 - T5
@@ -6,10 +6,9 @@ tests:
 - T9
 - T14
 - T15
-- T16
 - T17
 - T20
 - T8
 - T11
-apfd_prioritized: 0.6818
-apfd_random: 0.7955
+apfd_prioritized: 0.825
+apfd_random: 0.875
